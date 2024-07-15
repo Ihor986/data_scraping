@@ -2,8 +2,9 @@ import requests
 
 
 class APIClient:
-    def fetch_json_data(self, url):
+    
+    def fetch_data(self, url) -> requests.Response:
         response = requests.get(url)
         response.raise_for_status() 
-        data = response.json()
-        return data
+        return response
+    

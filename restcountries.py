@@ -6,8 +6,8 @@ class RestCountries(CountriesColumns):
     
     def __init__(self, api_client: APIClient, base_url: str) -> None:
         self._all_countries_df: pd.DataFrame = None
-        self.base_url = base_url
-        self.api_client = api_client
+        self.base_url: str = base_url
+        self.api_client: APIClient = api_client
         
     @property
     def all_countries_df(self) -> pd.DataFrame:
@@ -21,20 +21,20 @@ class RestCountries(CountriesColumns):
         
     def get_all_countries(self) -> None:
         url = '/all'
-        response = self.__get_json(f'{self.base_url}{url}')
-        data = self.__parse_json(response)
+        response = self.__get_response(f'{self.base_url}{url}')
+        data = self.__parse_json(response.json())
         self.all_countries_df = pd.DataFrame(data)
         
     def __parse_json(self, json) -> list:
         data = []
         for item in json:
             row = {
-                self.COUNTRY_NAME: item.get('name', {'official':''}).get('official'),
+                self.COUNTRY_NAME: item.get('name', {'official':''}).get('official',''),
                 self.CAPITAL_NAME: item.get('capital', [''])[0],
-                self.FLAG: item.get('flags', {'png':''}).get('png')
+                self.FLAG: item.get('flags', {'png':''}).get('png','')
             }
             data.append(row)
         return data
         
-    def __get_json(self, url) -> dict:
-        return self.api_client.fetch_json_data(url)
+    def __get_response(self, url) -> str:
+        return self.api_client.fetch_data(url)
